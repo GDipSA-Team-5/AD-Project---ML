@@ -4,7 +4,7 @@ print("This is the AD ML Application.")
 
 # -------------------------------------------------------------------------------------------------------------------
 # Example: A trained scikit-learn model
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 import pickle
 from sklearn import svm
 from sklearn import datasets
@@ -26,6 +26,13 @@ app = Flask(__name__)
 # load model
 with open("model.pkl", "rb") as f:
     model = pickle.load(f)
+
+@app.route('/')
+def home():
+    # You can return a simple string or render an HTML template
+    # return "<h1>Welcome to the Homepage!</h1>"
+    return render_template('home.html') 
+
 
 # health check api test endpoint
 @app.route("/health")
