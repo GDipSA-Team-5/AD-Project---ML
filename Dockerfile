@@ -1,18 +1,19 @@
-# base image
 FROM python:3.9-slim
 
-# working dir
 WORKDIR /app
 
-# install dependencies
+# System dependenciess (optional but helpful for ML libs)
+RUN apt-get update && apt-get install -y build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# copy code
+# Copy the rest of the application code
 COPY . .
 
-# expose port your app listens on
+# Expose the port the app runs on
 EXPOSE 8000
 
-# start command — adapt if you’re using Flask/uvicorn
-CMD ["uvicorn", "ADMLApplication:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use gunicorn for production
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "ADMLApplication:app"]
