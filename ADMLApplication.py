@@ -50,7 +50,7 @@ if __name__ == "__main__":
 """
 curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
-  -d '{"features":[1, 2, 3, 4]} 
+  -d '{"features":[1, 2, 3, 4]}'
 """
 # --- Test Method 2 ---
 """
@@ -60,4 +60,4 @@ Invoke-RestMethod `
   -ContentType "application/json" `
   -Body '{"features":[1,2,3,4]}'
 """
-
+# to stop running docker container image, use docker ps, then docker stop <container_id>
