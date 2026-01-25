@@ -31,7 +31,15 @@ with open("model.pkl", "rb") as f:
 def home():
     # You can return a simple string or render an HTML template
     # return "<h1>Welcome to the Homepage!</h1>"
-    return render_template('home.html') 
+    return """
+    <html>
+      <head><title>AD ML Application</title></head>
+      <body>
+        <h1>Welcome to the AD ML Application!</h1>
+        <p>This is running in Azure App Service.</p>
+      </body>
+    </html>
+    """
 
 
 # health check api test endpoint
