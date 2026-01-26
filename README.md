@@ -1,5 +1,5 @@
 # AD-Project---ML
-Team 5 Gdip SA - AD Project ML Component
+Team 5 GDipSA - AD Project ML Component
 <br>Uses Flask API and Python Pickle module
 <br>Pickle is commonly used with a Flask API to serialize Python objects (such as trained machine learning models) into a byte stream for storage in a file, and then deserialize them when the API is run to make predictions.
 
