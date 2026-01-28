@@ -8,20 +8,6 @@ app = Flask(__name__)
 
 model = joblib.load("model.pkl")
 
-print("FLASK MODEL:", model)
-print("FLASK MODEL TYPE:", type(model))
-print("CWD:", os.getcwd())
-print("MODEL PATH:", os.path.abspath("model.pkl"))
-
-
-print("FLASK MODEL:", model)
-print("FLASK MODEL TYPE:", type(model))
-
-# If LinearRegression, print coefficients
-if hasattr(model, "coef_"):
-    print("FLASK COEFFICIENTS:", model.coef_)
-    print("FLASK INTERCEPT:", model.intercept_)
-
 @app.route("/")
 def home():
     return {
@@ -38,10 +24,10 @@ def predict():
     data = request.json
 
     X = np.array([[
-        data["fill_percentage"],
-        data["month"],
-        data["is_weekend"],
-        data["days_since_last_REC"]
+        data["Fill_percentage"],
+        data["Month"],
+        data["Is_weekend"],
+        data["Days_since_last_REC"]
     ]])
 
     prediction = model.predict(X)[0]
