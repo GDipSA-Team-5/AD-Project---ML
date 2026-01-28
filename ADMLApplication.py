@@ -1,57 +1,54 @@
 
-print("Hello World!")
-print("This is the AD ML Application.")
+from flask import Flask, request, jsonify
+import joblib
+import numpy as np
+import os
 
-# -------------------------------------------------------------------------------------------------------------------
-# Example: A trained scikit-learn model
-from flask import Flask, render_template, request, jsonify
-import pickle
-from sklearn import svm
-from sklearn import datasets
-
-iris = datasets.load_iris()
-X, y = iris.data, iris.target
-
-model = svm.SVC()
-model.fit(X, y)
-
-filename = 'model.pkl'
-with open(filename, 'wb') as file:
-    pickle.dump(model, file)
-
-# -------------------------------------------------------------------------------------------------------------------
-# Flask API example (Must listen on 0.0.0.0)
 app = Flask(__name__)
 
-# load model
-with open("model.pkl", "rb") as f:
-    model = pickle.load(f)
+model = joblib.load("model.pkl")
 
-@app.route('/')
+print("FLASK MODEL:", model)
+print("FLASK MODEL TYPE:", type(model))
+print("CWD:", os.getcwd())
+print("MODEL PATH:", os.path.abspath("model.pkl"))
+
+
+print("FLASK MODEL:", model)
+print("FLASK MODEL TYPE:", type(model))
+
+# If LinearRegression, print coefficients
+if hasattr(model, "coef_"):
+    print("FLASK COEFFICIENTS:", model.coef_)
+    print("FLASK INTERCEPT:", model.intercept_)
+
+@app.route("/")
 def home():
-    # You can return a simple string or render an HTML template
-    # return "<h1>Welcome to the Homepage!</h1>"
-    return """
-    <html>
-      <head><title>AD ML Application</title></head>
-      <body>
-        <h1>Welcome to the AD ML Application!</h1>
-        <p>This is running in Azure App Service.</p>
-      </body>
-    </html>
-    """
+    return {
+        "service": "AD ML Application",
+        "status": "running"
+    }
 
-
-# health check api test endpoint
 @app.route("/health")
 def health():
-        return "OK", 200
+    return "OK", 200
 
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.json
-    pred = model.predict([data["features"]])
-    return jsonify({"prediction": pred.tolist()})
+
+    X = np.array([[
+        data["fill_percentage"],
+        data["month"],
+        data["is_weekend"],
+        data["days_since_last_REC"]
+    ]])
+
+    prediction = model.predict(X)[0]
+
+    return jsonify({
+        "predicted_fill": float(prediction)
+    })
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
