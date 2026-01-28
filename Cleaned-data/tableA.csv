@@ -1,4 +1,4 @@
-ContainerID,timestamp,fill_percentage,Cidx,Rec,month_of_collection,is_weekend,days_since_last_REC,next_observation_fill_percentage
+ContainerID,timestamp,fill_percentage,Cidx,Rec,month,is_weekend,days_since_last_REC,next_observation_fill_percentage
 1000,2021-01-16 11:30:00,52.5,0.0,1,1,1,0.0,52.5
 1000,2021-01-16 12:28:00,52.5,0.0,0,1,1,0.04027777777777778,52.5
 1000,2021-01-16 13:28:00,52.5,0.0,0,1,1,0.08194444444444444,52.5
