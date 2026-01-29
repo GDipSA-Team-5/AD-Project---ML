@@ -1,12 +1,45 @@
 
 from flask import Flask, request, jsonify
 import joblib
-import numpy as np
-import os
+import pandas as pd
 
 app = Flask(__name__)
 
 model = joblib.load("model.pkl")
+feature_columns = joblib.load("feature_columns.pkl")
+
+def estimate_days_to_threshold(pred_fill_growth, threshold=80):
+    return threshold / pred_fill_growth
+
+def predict_and_calculate(container_id, collection_fill_percentage, cycle_duration_days, 
+                          cycle_start_month, model, feature_columns, threshold=80):
+    
+    # Calculate avg daily fill growth
+    avg_daily_fill_growth = collection_fill_percentage / cycle_duration_days
+
+    X_input = pd.DataFrame([{
+        "ContainerID": container_id,
+        "collection_fill_percentage": collection_fill_percentage,
+        "cycle_start_month": cycle_start_month,
+        "cycle_duration_days": cycle_duration_days,
+        "avg_daily_fill_growth": avg_daily_fill_growth
+    }])
+
+    # One-hot encode ContainerID
+    X_input = pd.get_dummies(X_input, columns=["ContainerID"])
+    X_input = X_input.reindex(columns=feature_columns, fill_value=0)
+
+    # Predict next-cycle avg growth
+    pred_fill_growth = model.predict(X_input)[0]
+
+    # Calculate number of days till threshold
+    days_to_threshold = estimate_days_to_threshold(pred_fill_growth, threshold)
+
+    return {
+        "predicted_next_avg_daily_growth": float(pred_fill_growth),
+        "estimated_days_to_threshold": int(days_to_threshold)
+    }
+
 
 @app.route("/")
 def home():
@@ -23,18 +56,16 @@ def health():
 def predict():
     data = request.json
 
-    X = np.array([[
-        data["Fill_percentage"],
-        data["Month"],
-        data["Is_weekend"],
-        data["Days_since_last_REC"]
-    ]])
+    result = predict_and_calculate(
+        container_id=data["container_id"],
+        collection_fill_percentage=data["collection_fill_percentage"],
+        cycle_duration_days=data["cycle_duration_days"],
+        cycle_start_month=data["cycle_start_month"],
+        model=model,
+        feature_columns=feature_columns
+    )
 
-    prediction = model.predict(X)[0]
-
-    return jsonify({
-        "predicted_fill": float(prediction)
-    })
+    return jsonify(result)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
