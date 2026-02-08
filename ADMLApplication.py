@@ -9,6 +9,8 @@ model = joblib.load("model.pkl")
 feature_columns = joblib.load("feature_columns.pkl")
 
 def estimate_days_to_threshold(pred_fill_growth, threshold=80):
+    if pred_fill_growth <= 0:
+        raise ValueError("Predicted fill growth must be > 0")
     return threshold / pred_fill_growth
 
 def predict_and_calculate(container_id, collection_fill_percentage, cycle_duration_days, 
@@ -56,14 +58,40 @@ def health():
 def predict():
     data = request.json
 
-    result = predict_and_calculate(
-        container_id=data["container_id"],
-        collection_fill_percentage=data["collection_fill_percentage"],
-        cycle_duration_days=data["cycle_duration_days"],
-        cycle_start_month=data["cycle_start_month"],
-        model=model,
-        feature_columns=feature_columns
-    )
+    if not data:
+        return jsonify({"error": "Invalid or missing JSON body"}), 400
+
+    required_fields = [
+    "container_id",
+    "collection_fill_percentage",
+    "cycle_duration_days",
+    "cycle_start_month"
+    ]
+
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing field: {field}"}), 400
+
+    if data["cycle_duration_days"] <= 0:
+        return jsonify({"error": "cycle_duration_days must be > 0"}), 400
+
+    if not (0 <= data["collection_fill_percentage"] <= 100):
+        return jsonify({"error": "collection_fill_percentage must be between 0 and 100"}), 400
+    
+    try:
+        result = predict_and_calculate(
+            container_id=data["container_id"],
+            collection_fill_percentage=data["collection_fill_percentage"],
+            cycle_duration_days=data["cycle_duration_days"],
+            cycle_start_month=data["cycle_start_month"],
+            model=model,
+            feature_columns=feature_columns
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    if result["predicted_next_avg_daily_growth"] <= 0:
+        return jsonify({"error": "Invalid prediction result"}), 500
 
     return jsonify(result)
 
