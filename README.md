@@ -12,7 +12,7 @@ The ML service predicts:
 The ML model is trained using an open-source dataset (https://zenodo.org/records/14988663) that was cleaned and pre-processed.
 
 - Data cleaning and feature engineering performed by the team
-- Cleaned dataset uploaded to Hugging Face 
+- Cleaned dataset uploaded to Hugging Face (https://huggingface.co/datasets/SA61team5/AD-tableC)
 
 ## Architecture Overview
 - **Framework**: Flask (Python)
