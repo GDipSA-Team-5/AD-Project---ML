@@ -1,22 +1,16 @@
 # GDipSA-61: Team 05 (In5nite) – ML Prediction Service
 
-This repository contains the **Machine Learning (ML) microservice** for the In5nite project.  
-The service provides **bin fill growth prediction and threshold estimation** via a RESTful API and is designed to be deployed as a **containerised service**.
-
-The ML service is treated as a **black-box predictor** and is integrated with the .NET backend, which consumes the prediction results for operational decision-making.
+This repository contains the **Machine Learning (ML) microservice** for the In5nite project. 
 
 ## Purpose
 The ML service predicts:
 - Average daily fill growth for the next collection cycle
 - Estimated number of days until a predefined fill threshold is reached
 
-This enables **predictive waste collection planning** without embedding ML logic into the backend or mobile application.
-
 ## Dataset
 
 The ML model is trained using an open-source dataset (https://zenodo.org/records/14988663) that was cleaned and pre-processed.
 
-- Original dataset sourced from an open-source repository
 - Data cleaning and feature engineering performed by the team
 - Cleaned dataset uploaded to Hugging Face 
 
