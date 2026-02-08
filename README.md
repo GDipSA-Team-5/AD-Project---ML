@@ -1,12 +1,9 @@
-# GDipSA-61
-# Team 05: In5nite – ML Prediction Service
+# GDipSA-61: Team 05 (In5nite) – ML Prediction Service
 
 This repository contains the **Machine Learning (ML) microservice** for the In5nite project.  
 The service provides **bin fill growth prediction and threshold estimation** via a RESTful API and is designed to be deployed as a **containerised service**.
 
 The ML service is treated as a **black-box predictor** and is integrated with the .NET backend, which consumes the prediction results for operational decision-making.
-
----
 
 ## Purpose
 The ML service predicts:
@@ -23,9 +20,7 @@ The ML model is trained using an open-source dataset (https://zenodo.org/records
 - Data cleaning and feature engineering performed by the team
 - Cleaned dataset uploaded to Hugging Face 
 
----
-
-## 🏗 Architecture Overview
+## Architecture Overview
 - **Framework**: Flask (Python)
 - **Model Loading**: `joblib`
 - **Input/Output**: JSON over HTTP (REST API)
@@ -36,8 +31,6 @@ The ML service:
 - Has **no direct database access**
 - Stores **no system-critical secrets or credentials**
 - Is isolated as an independent microservice
-
----
 
 ## Health Check Endpoint
 
