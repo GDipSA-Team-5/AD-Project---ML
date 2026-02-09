@@ -36,6 +36,7 @@ jobs:
         run: |
           docker run -d --rm --name ml-service-sonar -p 8000:8000 ml-service:test
 
+      # Health check
       - name: Wait for service health check
         run: |
           echo "Waiting for service to become healthy..."
@@ -184,7 +185,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: zap-scan-report
+          name: zap_scan_report
           path: report_html.html
 
       - name: Stop container
