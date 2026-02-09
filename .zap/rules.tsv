@@ -1,13 +1,13 @@
 # ZAP Scanning Rules
 # Format: <rule_id>\t<threshold>\t<description>
-# Thresholds: IGNORE, INFO, LOW, MEDIUM, HIGH
+# Valid thresholds: PASS, IGNORE, INFO, WARN, FAIL
 
 # Ignore false positives for common ML service patterns
 10202	IGNORE	Absence of Anti-CSRF Tokens (GET requests only)
 10096	IGNORE	Timestamp Disclosure (Unix timestamp in responses)
 10015	IGNORE	Re-examine Cache-control Directives (API responses)
 
-# Keep important security checks enabled
-10038	MEDIUM	Content Security Policy (CSP) Header Not Set
-10035	MEDIUM	Strict-Transport-Security Header Not Set
-10063	MEDIUM	Feature Policy Header Not Set
+# Keep important security checks enabled 
+10038	WARN	Content Security Policy (CSP) Header Not Set
+10035	WARN	Strict-Transport-Security Header Not Set
+10063	WARN	Feature Policy Header Not Set
