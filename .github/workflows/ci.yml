@@ -52,7 +52,7 @@ jobs:
         with:
           project: "AD-Project-ML"
           path: "."
-          format: "HTML,JSON"
+          format: "ALL"
           out: "dependency-check-report"
           args: >
             --enableExperimental
