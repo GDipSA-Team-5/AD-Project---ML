@@ -24,14 +24,14 @@ jobs:
     - name: Build image
       run: docker build -t in5nite.azurecr.io/ad-ml-flask:latest .
 
-    # Test the Docker container
-    - name: Run container for health check
+    # Quick smoke test before pushing to registry
+    - name: Quick health check
       run: |
         docker run -d -p 8000:8000 --name ad-ml-flask-test in5nite.azurecr.io/ad-ml-flask:latest
-        sleep 10
-        curl -f http://localhost:8000/health
-        docker stop ad-ml-flask-test || true
-        docker rm ad-ml-flask-test || true
+        sleep 5
+        curl -f http://localhost:8000/health || (docker logs ad-ml-flask-test && exit 1)
+        docker stop ad-ml-flask-test
+        docker rm ad-ml-flask-test
 
     # Push the image to ACR
     - name: Push image to ACR

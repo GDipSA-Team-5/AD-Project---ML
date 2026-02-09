@@ -41,6 +41,44 @@ jobs:
             -Dsonar.organization=gdipsa-team-5
             -Dsonar.python.coverage.reportPaths=coverage.xml
 
+  integration-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t ml-service:test .
+
+      - name: Run container
+        run: |
+          docker run -d --rm --name ml-service-test -p 8000:8000 ml-service:test
+
+      - name: Wait for service health check
+        run: |
+          echo "Waiting for service to become healthy..."
+          for i in {1..30}; do
+            if curl -fsS http://localhost:8000/health > /dev/null; then
+              echo "Service is healthy"
+              exit 0
+            fi
+            echo "Attempt $i/30: Service not ready yet..."
+            sleep 2
+          done
+          echo "Service failed to become healthy"
+          docker logs ml-service-test
+          exit 1
+
+      - name: Test /health endpoint
+        run: |
+          curl -v http://localhost:8000/health
+
+      - name: Stop container
+        if: always()
+        run: |
+          docker stop ml-service-test || true
+
   dependency-check:
     runs-on: ubuntu-latest
     
