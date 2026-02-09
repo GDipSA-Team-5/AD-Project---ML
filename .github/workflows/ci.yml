@@ -2,8 +2,10 @@ name: CI - ML Service
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - '**'
   pull_request:
+  workflow_dispatch:
 
 jobs:
   sonar:
@@ -36,5 +38,5 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=GDipSA-Team-5_AD-Project---ML
-            -Dsonar.organization=GDipSA-Team-5
+            -Dsonar.organization=gdipsa-team-5
             -Dsonar.python.coverage.reportPaths=coverage.xml
