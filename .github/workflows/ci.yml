@@ -8,13 +8,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Run unit tests and SonarCloud code quality scan
   sonar:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -27,33 +28,13 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      - name: Run tests with coverage
-        run: |
-          pytest --cov=. --cov-report=xml
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=GDipSA-Team-5_AD-Project---ML
-            -Dsonar.organization=gdipsa-team-5
-            -Dsonar.python.coverage.reportPaths=coverage.xml
-
-  integration-test:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v4
-
       - name: Build Docker image
         run: |
           docker build -t ml-service:test .
 
       - name: Run container
         run: |
-          docker run -d --rm --name ml-service-test -p 8000:8000 ml-service:test
+          docker run -d --rm --name ml-service-sonar -p 8000:8000 ml-service:test
 
       - name: Wait for service health check
         run: |
@@ -67,18 +48,31 @@ jobs:
             sleep 2
           done
           echo "Service failed to become healthy"
-          docker logs ml-service-test
+          docker logs ml-service-sonar
           exit 1
 
-      - name: Test /health endpoint
+      - name: Run tests with coverage
+        env:
+          BASE_URL: http://localhost:8000
         run: |
-          curl -v http://localhost:8000/health
+          pytest --cov=. --cov-report=xml
 
       - name: Stop container
         if: always()
         run: |
-          docker stop ml-service-test || true
+          docker stop ml-service-sonar || true
 
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=GDipSA-Team-5_AD-Project---ML
+            -Dsonar.organization=gdipsa-team-5
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+
+  # Scan Python dependencies (SCA)
   dependency-check:
     runs-on: ubuntu-latest
     
@@ -103,10 +97,11 @@ jobs:
           name: dependency-check-report
           path: dependency-check-report
 
+  # Trivy Scan for docker image
   trivy-scan:
     runs-on: ubuntu-latest
     permissions:
-      security-events: write
+      security-events: write 
       contents: read
     
     steps:
@@ -123,6 +118,8 @@ jobs:
           format: 'sarif'
           output: 'trivy-image-results.sarif'
           severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          vuln-type: 'os,library'
 
       - name: Upload Trivy scan results to GitHub Security
         uses: github/codeql-action/upload-sarif@v4
@@ -137,3 +134,57 @@ jobs:
           scan-ref: '.'
           format: 'table'
           severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          vuln-type: 'os,library'
+
+  # DAST scan
+  zap-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t ml-service:zap .
+
+      - name: Run container
+        run: |
+          docker run -d --rm --name ml-service-zap -p 8000:8000 ml-service:zap
+
+      - name: Wait for service to be ready
+        run: |
+          echo "Waiting for service to become healthy..."
+          for i in {1..30}; do
+            if curl -fsS http://localhost:8000/health > /dev/null; then
+              echo "Service is healthy"
+              exit 0
+            fi
+            echo "Attempt $i/30: Service not ready yet..."
+            sleep 2
+          done
+          echo "Service failed to become healthy"
+          docker logs ml-service-zap
+          exit 1
+
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://localhost:8000'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a'
+
+      - name: Upload ZAP scan report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-scan-report
+          path: report_html.html
+
+      - name: Stop container
+        if: always()
+        run: |
+          docker stop ml-service-zap || true
