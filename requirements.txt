@@ -3,3 +3,7 @@ gunicorn
 numpy
 scikit-learn
 pandas
+datasets
+joblib
+pytest
+pytest-cov
