@@ -51,6 +51,9 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# OWASP Dependency-Check reports
+dependency-check-report/
+
 # Translations
 *.mo
 *.pot
