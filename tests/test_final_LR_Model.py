@@ -1,9 +1,3 @@
-"""
-Tests for final_LR_Model.py
-
-Basic tests to make sure the ML pipeline works correctly.
-"""
-
 import pytest
 import pandas as pd
 import numpy as np
@@ -26,7 +20,7 @@ def test_load_data():
     df = load_data()
     assert isinstance(df, pd.DataFrame)
     assert len(df) > 0
-    print("✓ Load data test passed")
+    print("Load data test passed")
 
 
 def test_load_data_has_columns():
@@ -43,7 +37,7 @@ def test_load_data_has_columns():
     ]
     for col in required_columns:
         assert col in df.columns
-    print("✓ Column check test passed")
+    print("Column check test passed")
 
 
 def test_prepare_features():
@@ -69,7 +63,7 @@ def test_prepare_features():
     
     # Check sizes
     assert len(X_train) + len(X_test) == len(df)
-    print("✓ Prepare features test passed")
+    print("Prepare features test passed")
 
 
 def test_train_and_evaluate():
@@ -96,7 +90,7 @@ def test_train_and_evaluate():
     assert "mae" in metrics
     assert "rmse" in metrics
     assert "r2" in metrics
-    print("✓ Train and evaluate test passed")
+    print("Train and evaluate test passed")
 
 
 def test_save_artifacts():
@@ -111,7 +105,7 @@ def test_save_artifacts():
         # Check that files were created
         assert os.path.exists(os.path.join(temp_dir, "model.pkl"))
         assert os.path.exists(os.path.join(temp_dir, "feature_columns.pkl"))
-        print("✓ Save artifacts test passed")
+        print("Save artifacts test passed")
     finally:
         shutil.rmtree(temp_dir)
 
@@ -124,7 +118,7 @@ def test_main():
     assert "mae" in metrics
     assert "rmse" in metrics
     assert "r2" in metrics
-    print("✓ Main pipeline test passed")
+    print("Main pipeline test passed")
 
 
 if __name__ == "__main__":
@@ -138,4 +132,4 @@ if __name__ == "__main__":
     test_save_artifacts()
     test_main()
     print()
-    print("All tests passed! ✓")
+    print("All tests passed!")
