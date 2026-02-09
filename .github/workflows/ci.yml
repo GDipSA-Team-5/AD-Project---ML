@@ -169,6 +169,9 @@ jobs:
           echo "Service failed to become healthy"
           docker logs ml-service-zap
           exit 1
+      
+      - name: Workspace permissions for ZAP
+        run: sudo chmod -R a+w .
 
       - name: OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.12.0
