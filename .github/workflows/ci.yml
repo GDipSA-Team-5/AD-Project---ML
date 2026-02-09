@@ -64,3 +64,35 @@ jobs:
         with:
           name: dependency-check-report
           path: dependency-check-report
+
+  trivy-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t ml-service:${{ github.sha }} .
+
+      - name: Trivy scan - Docker image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ml-service:${{ github.sha }}
+          format: 'sarif'
+          output: 'trivy-image-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-image-results.sarif'
+
+      - name: Trivy scan - Filesystem
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
