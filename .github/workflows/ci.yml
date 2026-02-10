@@ -239,6 +239,7 @@ jobs:
       - name: Snyk container scan
         uses: snyk/actions/docker@master
         continue-on-error: true
+        timeout-minutes: 10
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
