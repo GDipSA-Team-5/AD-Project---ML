@@ -159,6 +159,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: >
+            --org=gdipsa-team-5
             --severity-threshold=high
             --sarif-file-output=snyk-python.sarif
             --monitor
@@ -182,6 +183,7 @@ jobs:
           image: ad-ml-service:snyk
           sarif: true 
           args: >
+            --org=gdipsa-team-5
             --file=Dockerfile 
             --severity-threshold=high
             --monitor
