@@ -237,15 +237,15 @@ jobs:
         run: docker build -t ad-ml-service:snyk .
 
       - name: Snyk container scan
-        uses: snyk/actions/docker@master
+        uses: snyk/actions/docker@master 
         continue-on-error: true
         timeout-minutes: 10
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: ad-ml-service:snyk
-          args: >
-            test
+          file: Dockerfile  
+          args: >-
             --severity-threshold=high
             --sarif-file-output=snyk-container.sarif
 
