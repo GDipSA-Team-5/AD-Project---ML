@@ -244,6 +244,7 @@ jobs:
         with:
           image: ad-ml-service:snyk
           args: >
+            test
             --severity-threshold=high
             --sarif-file-output=snyk-container.sarif
 
