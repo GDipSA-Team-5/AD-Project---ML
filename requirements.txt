@@ -7,3 +7,4 @@ datasets
 joblib
 pytest
 pytest-cov
+pyarrow>=14.0.1
