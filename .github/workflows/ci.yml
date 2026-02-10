@@ -243,9 +243,9 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: ad-ml-service:snyk
-          file: Dockerfile
+          #file: Dockerfile
           sarif: true 
-          args: --severity-threshold=high
+          args: --file=Dockerfile --severity-threshold=high
           # file: Dockerfile  
           # args: >-
           #   --severity-threshold=high
