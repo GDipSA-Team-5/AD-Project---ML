@@ -74,29 +74,29 @@ jobs:
             -Dsonar.python.coverage.reportPaths=coverage.xml
 
   # Scan Python dependencies (SCA)
-  dependency-check:
-    runs-on: ubuntu-latest
+  # dependency-check:
+  #   runs-on: ubuntu-latest
     
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: OWASP Dependency-Check (SCA)
-        uses: dependency-check/Dependency-Check_Action@main
-        with:
-          project: "AD-Project-ML"
-          path: "."
-          format: "ALL"
-          out: "dependency-check-report"
-          args: >
-            --enableExperimental
-            --suppression dependency-check-suppressions.xml
+  #     - name: OWASP Dependency-Check (SCA)
+  #       uses: dependency-check/Dependency-Check_Action@main
+  #       with:
+  #         project: "AD-Project-ML"
+  #         path: "."
+  #         format: "ALL"
+  #         out: "dependency-check-report"
+  #         args: >
+  #           --enableExperimental
+  #           --suppression dependency-check-suppressions.xml
 
-      - name: Upload Dependency-Check report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency-check-report
-          path: dependency-check-report
+  #     - name: Upload Dependency-Check report
+  #       if: always()
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: dependency-check-report
+  #         path: dependency-check-report
 
   # Trivy Scan for docker image
   trivy-scan:
@@ -128,15 +128,15 @@ jobs:
         with:
           sarif_file: 'trivy-image-results.sarif'
 
-      - name: Trivy scan - Filesystem
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '0'
-          vuln-type: 'os,library'
+      # - name: Trivy scan - Filesystem
+      #   uses: aquasecurity/trivy-action@0.28.0
+      #   with:
+      #     scan-type: 'fs'
+      #     scan-ref: '.'
+      #     format: 'table'
+      #     severity: 'CRITICAL,HIGH'
+      #     exit-code: '0'
+      #     vuln-type: 'os,library'
 
   # DAST scan
   zap-scan:
@@ -197,3 +197,38 @@ jobs:
         if: always()
         run: |
           docker stop ml-service-zap || true
+
+  # snyk scan
+  snyk-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Snyk dependency scan
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: >
+            --severity-threshold=high
+            --sarif-file-output=snyk-python.sarif
+
+      - name: Upload Snyk results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: snyk-python.sarif
