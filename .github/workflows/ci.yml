@@ -3,8 +3,9 @@ name: CI - ML Service
 on:
   push:
     branches:
-      - '**'
+      - main  
   pull_request:
+ 
   workflow_dispatch:
 
 jobs:
@@ -164,6 +165,7 @@ jobs:
             --sarif-file-output=snyk-python.sarif
             --monitor
             --project-id=285068da-099b-4a88-b962-54ec82eeaedf
+            --project-tags=branch=${{ github.ref_name }}
 
       - name: Upload Snyk results to GitHub Security
         uses: github/codeql-action/upload-sarif@v4
