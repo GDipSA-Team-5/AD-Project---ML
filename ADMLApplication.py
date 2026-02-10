@@ -2,6 +2,7 @@
 from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
+import os
 
 app = Flask(__name__)
 
@@ -19,7 +20,7 @@ def predict_and_calculate(container_id, collection_fill_percentage, cycle_durati
     # Calculate avg daily fill growth
     avg_daily_fill_growth = collection_fill_percentage / cycle_duration_days
 
-    X_input = pd.DataFrame([{
+    x_input = pd.DataFrame([{
         "ContainerID": container_id,
         "collection_fill_percentage": collection_fill_percentage,
         "cycle_start_month": cycle_start_month,
@@ -28,11 +29,11 @@ def predict_and_calculate(container_id, collection_fill_percentage, cycle_durati
     }])
 
     # One-hot encode ContainerID
-    X_input = pd.get_dummies(X_input, columns=["ContainerID"])
-    X_input = X_input.reindex(columns=feature_columns, fill_value=0)
+    x_input = pd.get_dummies(x_input, columns=["ContainerID"])
+    x_input = x_input.reindex(columns=feature_columns, fill_value=0)
 
     # Predict next-cycle avg growth
-    pred_fill_growth = model.predict(X_input)[0]
+    pred_fill_growth = model.predict(x_input)[0]
 
     # Calculate number of days till threshold
     days_to_threshold = estimate_days_to_threshold(pred_fill_growth, threshold)
@@ -43,14 +44,14 @@ def predict_and_calculate(container_id, collection_fill_percentage, cycle_durati
     }
 
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def home():
     return {
         "service": "AD ML Application",
         "status": "running"
     }
 
-@app.route("/health")
+@app.route("/health", methods=["GET"])
 def health():
     return "OK", 200
 
@@ -96,7 +97,9 @@ def predict():
     return jsonify(result)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    host = os.getenv("FLASK_HOST", "127.0.0.1")
+    port = int(os.getenv("FLASK_PORT", "8000"))
+    app.run(host=host, port=port)
 
 # Install Docker: https://docs.docker.com/get-started/get-docker/
 # Before deploying to Azure — always test the docker container locally using the following commands:
