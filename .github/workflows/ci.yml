@@ -239,18 +239,20 @@ jobs:
       - name: Snyk container scan
         uses: snyk/actions/docker@master 
         continue-on-error: true
-        timeout-minutes: 10
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: ad-ml-service:snyk
-          file: Dockerfile  
-          args: >-
-            --severity-threshold=high
-            --sarif-file-output=snyk-container.sarif
+          file: Dockerfile
+          sarif: true 
+          args: --severity-threshold=high
+          # file: Dockerfile  
+          # args: >-
+          #   --severity-threshold=high
+          #   --sarif-file-output=snyk-container.sarif
 
       - name: Upload Snyk container results
-        if: always() && hashFiles('snyk-container.sarif') != ''
         uses: github/codeql-action/upload-sarif@v4
+        if: always()
         with:
-          sarif_file: snyk-container.sarif
+          sarif_file: snyk.sarif
