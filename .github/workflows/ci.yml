@@ -161,6 +161,8 @@ jobs:
           args: >
             --severity-threshold=high
             --sarif-file-output=snyk-python.sarif
+            --monitor
+            --project-name=requirements.txt
 
       - name: Upload Snyk results to GitHub Security
         uses: github/codeql-action/upload-sarif@v4
@@ -179,11 +181,8 @@ jobs:
         with:
           image: ad-ml-service:snyk
           sarif: true 
-          args: --file=Dockerfile --severity-threshold=high
-
-
-      - name: Upload Snyk container results
-        uses: github/codeql-action/upload-sarif@v4
-        if: always()
-        with:
-          sarif_file: snyk.sarif
+          args: >
+            --file=Dockerfile 
+            --severity-threshold=high
+            --monitor
+            --project-name=Dockerfile
