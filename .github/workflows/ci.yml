@@ -3,7 +3,7 @@ name: CI - ML Service
 on:
   push:
     branches:
-      - main  # Only runs when pushing/merging to main
+      - main 
   pull_request:
   workflow_dispatch:
 
@@ -112,7 +112,7 @@ jobs:
         run: sudo chmod -R a+w .
 
       - name: OWASP ZAP Baseline Scan
-        uses: zzaproxy/action-baseline@6f7e0e5ea584ec3622f83fb4b9c3134f9c5c4f76  # v0.12.0
+        uses: zaproxy/action-baseline@6f7e0e5ea584ec3622f83fb4b9c3134f9c5c4f76  # v0.12.0
         with:
           target: 'http://localhost:8000'
           rules_file_name: '.zap/rules.tsv'
