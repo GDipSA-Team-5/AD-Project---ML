@@ -16,6 +16,26 @@ def client():
     with flask_app.app.test_client() as client:
         yield client
 
+# Unit Tests for estimate_days_to_threshold 
+
+def test_estimate_days_to_threshold_success():
+    result = flask_app.estimate_days_to_threshold(5, threshold=80)
+    assert result == 16  # 80 / 5
+
+
+def test_estimate_days_to_threshold_custom_threshold():
+    result = flask_app.estimate_days_to_threshold(4, threshold=100)
+    assert result == 25
+
+
+def test_estimate_days_to_threshold_zero():
+    with pytest.raises(ValueError):
+        flask_app.estimate_days_to_threshold(0)
+
+
+def test_estimate_days_to_threshold_negative():
+    with pytest.raises(ValueError):
+        flask_app.estimate_days_to_threshold(-2)
 
 # Mock model + feature columns
 
