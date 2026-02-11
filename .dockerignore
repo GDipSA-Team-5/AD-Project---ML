@@ -1,9 +1,50 @@
+# Git files
 .git
 .gitignore
+.gitattributes
+
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment files
 .env
 .env.*
+.env.local
+*.key
+*.pem
+
+# Tests and docs
 tests/
 docs/
+*.md
+README.md
+
+# Logs
 *.log
+
+# CI/CD files
+.github/
+.gitlab-ci.yml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+venv/
+env/
+.venv/
