@@ -6,4 +6,4 @@ scikit-learn==1.6.1
 joblib
 pyarrow>=14.0.1
 werkzeug==3.0.3
-zipp>=3.19.1
+zipp==3.23.0
