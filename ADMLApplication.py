@@ -109,7 +109,12 @@ if __name__ == "__main__":
 """
 curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
-  -d '{"features":[1, 2, 3, 4]}'
+  -d '{
+        "container_id": 1,
+        "collection_fill_percentage": 40,
+        "cycle_duration_days": 10,
+        "cycle_start_month": 6
+      }'
 """
 # --- Test Method 2 ---
 """
