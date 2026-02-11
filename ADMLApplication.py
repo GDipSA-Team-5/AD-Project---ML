@@ -17,7 +17,6 @@ def estimate_days_to_threshold(pred_fill_growth, threshold=80):
 def predict_and_calculate(container_id, collection_fill_percentage, cycle_duration_days, 
                           cycle_start_month, model, feature_columns, threshold=80):
     
-    # Calculate avg daily fill growth
     avg_daily_fill_growth = collection_fill_percentage / cycle_duration_days
 
     x_input = pd.DataFrame([{
@@ -110,7 +109,12 @@ if __name__ == "__main__":
 """
 curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
-  -d '{"features":[1, 2, 3, 4]}'
+  -d '{
+        "container_id": 1,
+        "collection_fill_percentage": 40,
+        "cycle_duration_days": 10,
+        "cycle_start_month": 6
+      }'
 """
 # --- Test Method 2 ---
 """
