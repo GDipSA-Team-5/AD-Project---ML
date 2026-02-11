@@ -69,6 +69,8 @@ This endpoint is consumed by the .NET backend.
 
 ## AI Tool Declaration
 
-ChatGPT-5.2 was used to assist with parts of the data cleaning process and documentation.
+ChatGPT-5.2 was used to assist with:
+- portions of the data cleaning process
+- Cloud Deployment, yml build files
 
 We are responsible for the content and quality of the submitted work.
