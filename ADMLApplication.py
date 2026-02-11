@@ -95,6 +95,15 @@ def predict():
 
     return jsonify(result)
 
+@app.after_request
+def set_security_headers(response):
+    response.headers["Content-Security-Policy"] = "default-src 'self'"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Permissions-Policy"] = "geolocation=(), camera=()"
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
 if __name__ == "__main__":
     host = os.getenv("FLASK_HOST", "127.0.0.1")
     port = int(os.getenv("FLASK_PORT", "8000"))
