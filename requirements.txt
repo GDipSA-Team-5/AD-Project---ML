@@ -1,7 +1,8 @@
-flask
-gunicorn
-numpy
+flask==2.3.3
+gunicorn==21.2.0
+numpy==1.26.4
 pandas
 scikit-learn==1.6.1
 joblib
 pyarrow>=14.0.1
+werkzeug==2.3.8
