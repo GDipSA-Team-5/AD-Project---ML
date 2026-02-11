@@ -3,7 +3,7 @@ name: CI - ML Service
 on:
   push:
     branches:
-      - main  # Only runs when pushing/merging to main
+      - main 
   pull_request:
   workflow_dispatch:
 

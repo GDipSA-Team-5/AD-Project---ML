@@ -47,28 +47,28 @@ def prepare_features(df):
 
     target = "next_cycle_avg_daily_fill_growth"
 
-    X_train_raw = train_df[features]
-    X_test_raw = test_df[features]
+    x_train_raw = train_df[features]
+    x_test_raw = test_df[features]
 
     # One-hot encode ContainerID 
-    X_train = pd.get_dummies(X_train_raw, columns=["ContainerID"], drop_first=True)
-    X_test = pd.get_dummies(X_test_raw, columns=["ContainerID"], drop_first=True)
+    x_train = pd.get_dummies(x_train_raw, columns=["ContainerID"], drop_first=True)
+    x_test = pd.get_dummies(x_test_raw, columns=["ContainerID"], drop_first=True)
 
     # Make sure train and test have same columns
-    X_train, X_test = X_train.align(X_test, join="left", axis=1, fill_value=0)
+    x_train, x_test = x_train.align(x_test, join="left", axis=1, fill_value=0)
 
     y_train = train_df[target]
     y_test = test_df[target]
 
-    return X_train, X_test, y_train, y_test
+    return x_train, x_test, y_train, y_test
 
-def train_and_evaluate(X_train, X_test, y_train, y_test):
+def train_and_evaluate(x_train, x_test, y_train, y_test):
     print("Training model...")
     model = LinearRegression()
-    model.fit(X_train, y_train)
+    model.fit(x_train, y_train)
 
     print("Evaluating model...")
-    y_pred = model.predict(X_test)
+    y_pred = model.predict(x_test)
 
     # Calculate metrics
     mae = mean_absolute_error(y_test, y_pred)
